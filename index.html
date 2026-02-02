@@ -16,18 +16,17 @@
     <style>
         :root {
             --bg-dark: #0f1115;
-            /* Metallic Dark */
             --bg-card: rgba(30, 34, 42, 0.7);
+            --sidebar-bg: rgba(15, 17, 21, 0.95);
             --accent-silver: #94a3b8;
             --accent-metal: #475569;
             --accent-glow: #3b82f6;
-            /* Dashboard Blue */
             --accent-warn: #f59e0b;
-            /* Hazard Orange */
             --text-main: #f1f5f9;
             --text-dim: #94a3b8;
             --border-glass: rgba(255, 255, 255, 0.1);
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 260px;
         }
 
         * {
@@ -45,8 +44,88 @@
             background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
-            padding: 2rem 1rem;
+            display: flex;
             line-height: 1.6;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-glass);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-brand svg {
+            width: 24px;
+            color: var(--accent-glow);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            display: block;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-link.active {
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: var(--accent-glow);
+        }
+
+        .nav-link svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem 3rem;
+            width: calc(100% - var(--sidebar-width));
         }
 
         .container {
@@ -68,10 +147,13 @@
         }
 
         header {
-            text-align: center;
+            text-align: left;
             margin-bottom: 3rem;
             border-bottom: 1px solid var(--border-glass);
             padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
 
         h1 {
@@ -289,6 +371,28 @@
             font-style: italic;
         }
 
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                padding: 1.5rem 0.5rem;
+            }
+
+            .sidebar-brand span,
+            .nav-link span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+                padding: 1.5rem;
+            }
+
+            :root {
+                --sidebar-width: 70px;
+            }
+        }
+
         @media (max-width: 768px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
@@ -333,144 +437,181 @@
 
 <body>
 
-    <div class="container">
-        <header>
-            <h1>Service Dashboard</h1>
-            <div class="subtitle">Vehicle Management System</div>
-        </header>
-
-        <form id="serviceForm">
-            <div class="dashboard-grid">
-                <!-- Section 1: Owner -->
-                <div class="section-card">
-                    <div class="section-title">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+            <span>TRACKER</span>
+        </div>
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link active">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
                         </svg>
-                        Maklumat Owner
-                    </div>
-                    <div class="form-group">
-                        <label>Nama Pemilik</label>
-                        <input type="text" id="ownerName" placeholder="Contoh: Ahmad" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Nombor Telefon</label>
-                        <input type="tel" id="ownerPhone" placeholder="012-XXXXXXX">
-                    </div>
+                        <span>Input Record</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <line x1="12" y1="8" x2="12" y2="16" />
+                            <line x1="8" y1="12" x2="16" y2="12" />
+                        </svg>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="container">
+            <header>
+                <div>
+                    <h1>Service Tracker</h1>
+                    <div class="subtitle">Vehicle Management System</div>
                 </div>
+            </header>
 
-                <!-- Section 2: Car -->
-                <div class="section-card">
-                    <div class="section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="1" y="3" width="15" height="13" />
-                            <path d="M16 8h4l3 3v5h-7V8z" />
-                            <circle cx="5.5" cy="18.5" r="2.5" />
-                            <circle cx="18.5" cy="18.5" r="2.5" />
-                        </svg>
-                        Maklumat Kereta
-                    </div>
-                    <div class="form-group">
-                        <label>Plate Number</label>
-                        <input type="text" id="plateNumber" placeholder="ABC 1234" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Jenama / Model</label>
-                        <select id="carModel">
-                            <option value="Proton Saga">Proton Saga</option>
-                            <option value="Proton Persona">Proton Persona</option>
-                            <option value="Proton X50">Proton X50</option>
-                            <option value="Perodua Myvi">Perodua Myvi</option>
-                            <option value="Perodua Bezza">Perodua Bezza</option>
-                            <option value="Perodua Axia">Perodua Axia</option>
-                            <option value="Toyota Vios">Toyota Vios</option>
-                            <option value="Honda Civic">Honda Civic</option>
-                            <option value="Lain-lain">Lain-lain</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Tahun (Pilihan)</label>
-                        <input type="number" id="carYear" placeholder="2022">
-                    </div>
-                </div>
 
-                <!-- Section 3: Job -->
-                <div class="section-card full-row">
-                    <div class="section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path
-                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-                        </svg>
-                        Maklumat Servis / Job
-                    </div>
-                    <div class="dashboard-grid" style="gap: 1.5rem;">
+            <form id="serviceForm">
+                <div class="dashboard-grid">
+                    <!-- Section 1: Owner -->
+                    <div class="section-card">
+                        <div class="section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            Maklumat Owner
+                        </div>
                         <div class="form-group">
-                            <label>Jenis Servis</label>
-                            <select id="serviceType">
-                                <option value="Tukar Minyak">Tukar Minyak (Service)</option>
-                                <option value="Periksa Brek">Periksa Brek</option>
-                                <option value="Servis Penuh">Servis Penuh (Major)</option>
-                                <option value="Tayar / Alignment">Tayar / Alignment</option>
-                                <option value="Aircond Servis">Aircond Servis</option>
-                                <option value="Pembaikan (Repair)">Pembaikan (Repair)</option>
+                            <label>Nama Pemilik</label>
+                            <input type="text" id="ownerName" placeholder="Contoh: Ahmad" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nombor Telefon</label>
+                            <input type="tel" id="ownerPhone" placeholder="012-XXXXXXX">
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Car -->
+                    <div class="section-card">
+                        <div class="section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="1" y="3" width="15" height="13" />
+                                <path d="M16 8h4l3 3v5h-7V8z" />
+                                <circle cx="5.5" cy="18.5" r="2.5" />
+                                <circle cx="18.5" cy="18.5" r="2.5" />
+                            </svg>
+                            Maklumat Kereta
+                        </div>
+                        <div class="form-group">
+                            <label>Plate Number</label>
+                            <input type="text" id="plateNumber" placeholder="ABC 1234" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Jenama / Model</label>
+                            <select id="carModel">
+                                <option value="Proton Saga">Proton Saga</option>
+                                <option value="Proton Persona">Proton Persona</option>
+                                <option value="Proton X50">Proton X50</option>
+                                <option value="Perodua Myvi">Perodua Myvi</option>
+                                <option value="Perodua Bezza">Perodua Bezza</option>
+                                <option value="Perodua Axia">Perodua Axia</option>
+                                <option value="Toyota Vios">Toyota Vios</option>
+                                <option value="Honda Civic">Honda Civic</option>
+                                <option value="Lain-lain">Lain-lain</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Catatan Tambahan</label>
-                            <textarea id="catatan" rows="3"
-                                placeholder="Nota tambahan berkenaan kenderaan..."></textarea>
+                            <label>Tahun (Pilihan)</label>
+                            <input type="number" id="carYear" placeholder="2022">
                         </div>
                     </div>
-                </div>
 
-                <!-- Toolbar -->
-                <div class="btn-toolbar">
-                    <button type="submit" class="btn-save">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                            <path d="M12 5v14M5 12h14" />
-                        </svg>
-                        Simpan Rekod
-                    </button>
-                    <button type="button" id="exportBtn" class="btn-export">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                            <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        Export ke Excel
-                    </button>
-                    <button type="button" id="clearBtn" class="btn-reset">RESET</button>
-                </div>
-            </div>
-        </form>
+                    <!-- Section 3: Job -->
+                    <div class="section-card full-row">
+                        <div class="section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                            </svg>
+                            Maklumat Servis / Job
+                        </div>
+                        <div class="dashboard-grid" style="gap: 1.5rem;">
+                            <div class="form-group">
+                                <label>Jenis Servis</label>
+                                <select id="serviceType">
+                                    <option value="Tukar Minyak">Tukar Minyak (Service)</option>
+                                    <option value="Periksa Brek">Periksa Brek</option>
+                                    <option value="Servis Penuh">Servis Penuh (Major)</option>
+                                    <option value="Tayar / Alignment">Tayar / Alignment</option>
+                                    <option value="Aircond Servis">Aircond Servis</option>
+                                    <option value="Pembaikan (Repair)">Pembaikan (Repair)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Catatan Tambahan</label>
+                                <textarea id="catatan" rows="3"
+                                    placeholder="Nota tambahan berkenaan kenderaan..."></textarea>
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- Table Section -->
-        <div class="log-section">
-            <h2
-                style="font-family: 'Orbitron', sans-serif; font-size: 1rem; margin-bottom: 1rem; color: var(--accent-glow);">
-                Session Log
-            </h2>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Plate No</th>
-                            <th>Model</th>
-                            <th>Owner</th>
-                            <th>Job Type</th>
-                            <th>Time Received</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logTableBody">
-                        <tr>
-                            <td colspan="5" class="empty-row">Sistem sedia untuk menerima data...</td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <!-- Toolbar -->
+                    <div class="btn-toolbar">
+                        <button type="submit" class="btn-save">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M12 5v14M5 12h14" />
+                            </svg>
+                            Simpan Rekod
+                        </button>
+                        <button type="button" id="exportBtn" class="btn-export">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Export ke Excel
+                        </button>
+                        <button type="button" id="clearBtn" class="btn-reset">RESET</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Table Section -->
+            <div class="log-section">
+                <h2
+                    style="font-family: 'Orbitron', sans-serif; font-size: 1rem; margin-bottom: 1rem; color: var(--accent-glow);">
+                    Session Log
+                </h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Plate No</th>
+                                <th>Model</th>
+                                <th>Owner</th>
+                                <th>Job Type</th>
+                                <th>Time Received</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logTableBody">
+                            <tr>
+                                <td colspan="5" class="empty-row">Sistem sedia untuk menerima data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <div id="statusMsg" class="status-msg">Rekod berjaya disimpan!</div>
 
