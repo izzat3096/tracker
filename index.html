@@ -527,30 +527,27 @@
             submitBtn.disabled = true;
 
             try {
-                // Save to Cloud
-                const response = await fetch(WEB_APP_URL, {
+                // Save to Cloud - Using text/plain to avoid CORS preflight issues
+                await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // Apps Script requires no-cors for simple POST
-                    cache: 'no-cache',
-                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify(newRecord)
                 });
 
-                // Update Local Data
+                // Update Local Data (Offline backup)
                 serviceDb.push(newRecord);
                 localStorage.setItem('service_records', JSON.stringify(serviceDb));
 
                 renderTable();
                 form.reset();
-                showStatus('Rekod berjaya disimpan di Cloud!');
+                showStatus('Rekod berjaya dihantar ke Cloud!');
+
+                // Re-sync to confirm it's there
+                setTimeout(syncFromCloud, 2000);
             } catch (err) {
                 console.error('Save Error:', err);
-                alert('Gagal simpan ke Cloud. Rekod disimpan secara lokal.');
-
-                // Still save locally
-                serviceDb.push(newRecord);
-                localStorage.setItem('service_records', JSON.stringify(serviceDb));
-                renderTable();
+                showStatus('Gagal simpan ke Cloud. Sila hubungi Admin.');
             } finally {
                 submitBtn.innerHTML = originalBtnText;
                 submitBtn.disabled = false;
