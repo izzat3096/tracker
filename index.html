@@ -4,24 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Activity Tracker | Excel Edition</title>
-    <!-- Google Fonts: Inter -->
+    <title>Service Dashboard | Automotive Tracker</title>
+    <!-- Google Fonts: Inter & Orbitron for that tech look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- SheetJS CDN -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- SheetJS for Excel Support -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary: #8b5cf6;
-            --primary-hover: #7c3aed;
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --input-bg: rgba(0, 0, 0, 0.2);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-dark: #0f1115;
+            /* Metallic Dark */
+            --bg-card: rgba(30, 34, 42, 0.7);
+            --accent-silver: #94a3b8;
+            --accent-metal: #475569;
+            --accent-glow: #3b82f6;
+            /* Dashboard Blue */
+            --accent-warn: #f59e0b;
+            /* Hazard Orange */
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -32,24 +38,27 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg-gradient);
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 80%),
+                linear-gradient(135deg, #0f1115 0%, #1e293b 100%);
             background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
-            padding: 2rem;
+            padding: 2rem 1rem;
             line-height: 1.6;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            animation: fadeIn 0.8s ease-out;
+            animation: slideUp 0.6s ease-out;
         }
 
-        @keyframes fadeIn {
+        @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
 
             to {
@@ -58,173 +67,266 @@
             }
         }
 
-        .card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            margin-bottom: 2rem;
-        }
-
         header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 1.5rem;
         }
 
         h1 {
-            font-size: 2.2rem;
-            background: linear-gradient(to right, #fff, #c4b5fd);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, #94a3b8);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
         }
 
-        .form-grid {
+        .subtitle {
+            font-size: 0.8rem;
+            color: var(--accent-glow);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 700;
+        }
+
+        /* Form Layout */
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-glow);
+            opacity: 0.5;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-silver);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title svg {
+            width: 18px;
+            color: var(--accent-glow);
+        }
+
+        .full-row {
+            grid-column: span 2;
         }
 
         .form-group {
             margin-bottom: 1.25rem;
         }
 
-        .full-width {
-            grid-column: 1 / -1;
-        }
-
         label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #c4b5fd;
+            color: var(--text-dim);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         input,
+        select,
         textarea {
             width: 100%;
-            padding: 0.8rem 1rem;
-            background: var(--input-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            padding: 0.9rem 1.25rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-family: inherit;
             transition: var(--transition);
             outline: none;
         }
 
         input:focus,
+        select:focus,
         textarea:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+            border-color: var(--accent-glow);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
         }
 
-        .btn-group {
+        /* Buttons */
+        .btn-toolbar {
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 1.25rem;
+            margin-top: 2rem;
+            grid-column: span 2;
         }
 
         button {
             flex: 1;
-            padding: 1rem;
+            padding: 1.1rem;
             border: none;
             border-radius: 12px;
-            font-weight: 600;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
             cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-add {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-add:hover {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
+            gap: 0.75rem;
         }
 
         .btn-save {
-            background: #10b981;
+            background: linear-gradient(to right, #2563eb, #1d4ed8);
             color: white;
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
         }
 
         .btn-save:hover {
-            background: #059669;
             transform: translateY(-2px);
+            filter: brightness(1.1);
         }
 
-        .btn-clear {
-            background: rgba(255, 255, 255, 0.1);
+        .btn-export {
+            background: #10b981;
             color: white;
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
         }
 
-        .btn-clear:hover {
+        .btn-export:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .btn-reset {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent-silver);
+            max-width: 150px;
+        }
+
+        .btn-reset:hover {
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Table Styling */
-        .table-container {
-            overflow-x: auto;
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            background: rgba(0, 0, 0, 0.2);
+        /* Log Table */
+        .log-section {
+            margin-top: 3rem;
+        }
+
+        .table-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            text-align: left;
         }
 
         th {
-            background: rgba(255, 255, 255, 0.05);
-            color: #c4b5fd;
-            text-align: left;
-            padding: 1rem;
-            font-weight: 600;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.25rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent-glow);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 2px;
         }
 
         td {
-            padding: 1rem;
-            border-top: 1px solid var(--glass-border);
-            color: var(--text-muted);
+            padding: 1.25rem;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border-glass);
+            color: var(--text-dim);
+        }
+
+        tr:last-child td {
+            border: none;
         }
 
         tr:hover td {
             color: white;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.03);
         }
 
-        .empty-state {
+        .empty-row {
             text-align: center;
-            padding: 3rem;
-            color: var(--text-muted);
+            padding: 4rem;
+            color: var(--text-dim);
             font-style: italic;
         }
 
-        @media (max-width: 600px) {
-            .form-grid {
+        @media (max-width: 768px) {
+            .dashboard-grid {
                 grid-template-columns: 1fr;
             }
 
-            .btn-group {
-                flex-direction: column;
+            .full-row {
+                grid-column: span 1;
             }
+
+            .btn-toolbar {
+                flex-direction: column;
+                grid-column: span 1;
+            }
+
+            .btn-reset {
+                max-width: none;
+                order: 3;
+            }
+        }
+
+        /* Success Indicator */
+        .status-msg {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            background: #10b981;
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+            transform: translateY(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .status-msg.active {
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -232,69 +334,137 @@
 <body>
 
     <div class="container">
-        <div class="card">
-            <header>
-                <h1>Activity Tracker</h1>
-                <p style="color: var(--text-muted)">Log your day and export to Excel</p>
-            </header>
+        <header>
+            <h1>Service Dashboard</h1>
+            <div class="subtitle">Vehicle Management System</div>
+        </header>
 
-            <form id="activityForm">
-                <div class="form-grid">
-                    <div class="form-group full-width">
-                        <label for="activity">Activity Name</label>
-                        <input type="text" id="activity" placeholder="What are you doing?" required>
+        <form id="serviceForm">
+            <div class="dashboard-grid">
+                <!-- Section 1: Owner -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        Maklumat Owner
                     </div>
                     <div class="form-group">
-                        <label for="startTime">Start Time</label>
-                        <input type="time" id="startTime" required>
+                        <label>Nama Pemilik</label>
+                        <input type="text" id="ownerName" placeholder="Contoh: Ahmad" required>
                     </div>
                     <div class="form-group">
-                        <label for="endTime">End Time</label>
-                        <input type="time" id="endTime" required>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="notes">Notes</label>
-                        <textarea id="notes" rows="3" placeholder="Additional details..."></textarea>
+                        <label>Nombor Telefon</label>
+                        <input type="tel" id="ownerPhone" placeholder="012-XXXXXXX">
                     </div>
                 </div>
 
-                <div class="btn-group">
-                    <button type="submit" class="btn-add">
+                <!-- Section 2: Car -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="3" width="15" height="13" />
+                            <path d="M16 8h4l3 3v5h-7V8z" />
+                            <circle cx="5.5" cy="18.5" r="2.5" />
+                            <circle cx="18.5" cy="18.5" r="2.5" />
+                        </svg>
+                        Maklumat Kereta
+                    </div>
+                    <div class="form-group">
+                        <label>Plate Number</label>
+                        <input type="text" id="plateNumber" placeholder="ABC 1234" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Jenama / Model</label>
+                        <select id="carModel">
+                            <option value="Proton Saga">Proton Saga</option>
+                            <option value="Proton Persona">Proton Persona</option>
+                            <option value="Proton X50">Proton X50</option>
+                            <option value="Perodua Myvi">Perodua Myvi</option>
+                            <option value="Perodua Bezza">Perodua Bezza</option>
+                            <option value="Perodua Axia">Perodua Axia</option>
+                            <option value="Toyota Vios">Toyota Vios</option>
+                            <option value="Honda Civic">Honda Civic</option>
+                            <option value="Lain-lain">Lain-lain</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tahun (Pilihan)</label>
+                        <input type="number" id="carYear" placeholder="2022">
+                    </div>
+                </div>
+
+                <!-- Section 3: Job -->
+                <div class="section-card full-row">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                        </svg>
+                        Maklumat Servis / Job
+                    </div>
+                    <div class="dashboard-grid" style="gap: 1.5rem;">
+                        <div class="form-group">
+                            <label>Jenis Servis</label>
+                            <select id="serviceType">
+                                <option value="Tukar Minyak">Tukar Minyak (Service)</option>
+                                <option value="Periksa Brek">Periksa Brek</option>
+                                <option value="Servis Penuh">Servis Penuh (Major)</option>
+                                <option value="Tayar / Alignment">Tayar / Alignment</option>
+                                <option value="Aircond Servis">Aircond Servis</option>
+                                <option value="Pembaikan (Repair)">Pembaikan (Repair)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Catatan Tambahan</label>
+                            <textarea id="catatan" rows="3"
+                                placeholder="Nota tambahan berkenaan kenderaan..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="btn-toolbar">
+                    <button type="submit" class="btn-save">
                         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path d="M12 5v14M5 12h14" />
                         </svg>
-                        Add Record
+                        Simpan Rekod
                     </button>
-                    <button type="button" id="exportBtn" class="btn-save">
+                    <button type="button" id="exportBtn" class="btn-export">
                         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
-                        Export to Excel
+                        Export ke Excel
                     </button>
-                    <button type="button" id="clearBtn" class="btn-clear">
-                        Reset
-                    </button>
+                    <button type="button" id="clearBtn" class="btn-reset">RESET</button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
 
-        <div class="card">
-            <h2 style="margin-bottom: 1.5rem; font-size: 1.2rem; color: #c4b5fd;">Current Session Log</h2>
-            <div class="table-container">
+        <!-- Table Section -->
+        <div class="log-section">
+            <h2
+                style="font-family: 'Orbitron', sans-serif; font-size: 1rem; margin-bottom: 1rem; color: var(--accent-glow);">
+                Session Log
+            </h2>
+            <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
-                            <th>Activity</th>
-                            <th>Start</th>
-                            <th>End</th>
-                            <th>Notes</th>
+                            <th>Plate No</th>
+                            <th>Model</th>
+                            <th>Owner</th>
+                            <th>Job Type</th>
+                            <th>Time Received</th>
                         </tr>
                     </thead>
                     <tbody id="logTableBody">
                         <tr>
-                            <td colspan="4" class="empty-state">No records added yet.</td>
+                            <td colspan="5" class="empty-row">Sistem sedia untuk menerima data...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -302,97 +472,86 @@
         </div>
     </div>
 
-    <script>
-        // Load records from localStorage on startup
-        let records = JSON.parse(localStorage.getItem('activity_db')) || [];
+    <div id="statusMsg" class="status-msg">Rekod berjaya disimpan!</div>
 
-        const form = document.getElementById('activityForm');
+    <script>
+        // Initialize DB from LocalStorage
+        let serviceDb = JSON.parse(localStorage.getItem('service_records')) || [];
+
+        const form = document.getElementById('serviceForm');
         const tableBody = document.getElementById('logTableBody');
         const exportBtn = document.getElementById('exportBtn');
         const clearBtn = document.getElementById('clearBtn');
+        const statusMsg = document.getElementById('statusMsg');
 
-        // Initial render
-        updateTable();
+        // Load table on start
+        renderTable();
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const record = {
-                Activity: document.getElementById('activity').value,
-                Start: document.getElementById('startTime').value,
-                End: document.getElementById('endTime').value,
-                Notes: document.getElementById('notes').value || '-',
-                Timestamp: new Date().toLocaleString()
+            const newRecord = {
+                'Nama Pemilik': document.getElementById('ownerName').value,
+                'No Telefon': document.getElementById('ownerPhone').value || '-',
+                'Plate Number': document.getElementById('plateNumber').value.toUpperCase(),
+                'Jenama/Model': document.getElementById('carModel').value,
+                'Tahun': document.getElementById('carYear').value || '-',
+                'Jenis Servis': document.getElementById('serviceType').value,
+                'Catatan': document.getElementById('catatan').value || '-',
+                'Tarikh & Masa': new Date().toLocaleString()
             };
 
-            records.push(record);
-            saveToDisk(); // Save to LocalStorage
-            updateTable();
-            form.reset();
+            serviceDb.push(newRecord);
+            localStorage.setItem('service_records', JSON.stringify(serviceDb));
 
-            // Show subtle feedback
-            const originalText = document.querySelector('.btn-add').innerHTML;
-            document.querySelector('.btn-add').innerHTML = '✅ Added!';
-            setTimeout(() => document.querySelector('.btn-add').innerHTML = originalText, 2000);
+            renderTable();
+            form.reset();
+            showStatus();
         });
 
-        function saveToDisk() {
-            localStorage.setItem('activity_db', JSON.stringify(records));
-        }
-
-        function updateTable() {
-            if (records.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="4" class="empty-state">No records added yet. Data is saved automatically in your browser.</td></tr>';
+        function renderTable() {
+            if (serviceDb.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="empty-row">Sistem sedia untuk menerima data...</td></tr>';
                 return;
             }
 
-            // Show newest first
-            tableBody.innerHTML = records.slice().reverse().map(r => `
+            tableBody.innerHTML = serviceDb.slice().reverse().map(record => `
             <tr>
-                <td style="color: white; font-weight: 500;">${r.Activity}</td>
-                <td>${r.Start}</td>
-                <td>${r.End}</td>
-                <td>${r.Notes}</td>
+                <td style="color: white; font-weight: 700;">${record['Plate Number']}</td>
+                <td>${record['Jenama/Model']}</td>
+                <td>${record['Nama Pemilik']}</td>
+                <td style="color: var(--accent-glow);">${record['Jenis Servis']}</td>
+                <td style="font-size: 0.75rem;">${record['Tarikh & Masa']}</td>
             </tr>
         `).join('');
         }
 
         exportBtn.addEventListener('click', () => {
-            if (records.length === 0) {
-                alert('Please add at least one record first!');
+            if (serviceDb.length === 0) {
+                alert('Sila tambah sekurang-kurangnya satu rekod dahulu.');
                 return;
             }
 
-            const exportData = records.map(r => ({
-                'Activity Name': r.Activity,
-                'Start Time': r.Start,
-                'End Time': r.End,
-                'Notes': r.Notes,
-                'Logged At': r.Timestamp
-            }));
-
-            const ws = XLSX.utils.json_to_sheet(exportData);
+            const ws = XLSX.utils.json_to_sheet(serviceDb);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Activity Log History");
+            XLSX.utils.book_append_sheet(wb, ws, "Service History");
 
-            // Use a consistent name or timestamp
-            const filename = "Activity_Tracker_Database.xlsx";
-            XLSX.writeFile(wb, filename);
-
-            alert('Exporting your full history. To keep one file, just replace the old "Activity_Tracker_Database.xlsx" in your folder!');
+            const dateStr = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `Service_Log_Master_${dateStr}.xlsx`);
         });
 
         clearBtn.addEventListener('click', () => {
-            if (confirm('Are you sure? This will delete ALL records from your history.')) {
-                records = [];
-                saveToDisk();
-                updateTable();
-                form.reset();
+            if (confirm('Padamkan SEMUA rekod perkhidmatan dalam sistem?')) {
+                serviceDb = [];
+                localStorage.setItem('service_records', JSON.stringify(serviceDb));
+                renderTable();
             }
         });
 
-        // Special message for the "Folder" requirement
-        console.log("Tip: Browsers cannot automatically write to your 'Project New' folder for security. By exporting your full history each time, you can maintain one master Excel file by overwriting the old one.");
+        function showStatus() {
+            statusMsg.classList.add('active');
+            setTimeout(() => statusMsg.classList.remove('active'), 3000);
+        }
     </script>
 
 </body>
