@@ -303,12 +303,16 @@
     </div>
 
     <script>
-        let records = [];
+        // Load records from localStorage on startup
+        let records = JSON.parse(localStorage.getItem('activity_db')) || [];
 
         const form = document.getElementById('activityForm');
         const tableBody = document.getElementById('logTableBody');
         const exportBtn = document.getElementById('exportBtn');
         const clearBtn = document.getElementById('clearBtn');
+
+        // Initial render
+        updateTable();
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -322,24 +326,35 @@
             };
 
             records.push(record);
+            saveToDisk(); // Save to LocalStorage
             updateTable();
             form.reset();
+
+            // Show subtle feedback
+            const originalText = document.querySelector('.btn-add').innerHTML;
+            document.querySelector('.btn-add').innerHTML = '✅ Added!';
+            setTimeout(() => document.querySelector('.btn-add').innerHTML = originalText, 2000);
         });
+
+        function saveToDisk() {
+            localStorage.setItem('activity_db', JSON.stringify(records));
+        }
 
         function updateTable() {
             if (records.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="4" class="empty-state">No records added yet.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="4" class="empty-state">No records added yet. Data is saved automatically in your browser.</td></tr>';
                 return;
             }
 
-            tableBody.innerHTML = records.map(r => `
+            // Show newest first
+            tableBody.innerHTML = records.slice().reverse().map(r => `
             <tr>
                 <td style="color: white; font-weight: 500;">${r.Activity}</td>
                 <td>${r.Start}</td>
                 <td>${r.End}</td>
                 <td>${r.Notes}</td>
             </tr>
-        `).reverse().join(''); // Show newest first in table
+        `).join('');
         }
 
         exportBtn.addEventListener('click', () => {
@@ -348,7 +363,6 @@
                 return;
             }
 
-            // Prepare data for Excel (reordering columns for the sheet)
             const exportData = records.map(r => ({
                 'Activity Name': r.Activity,
                 'Start Time': r.Start,
@@ -357,23 +371,28 @@
                 'Logged At': r.Timestamp
             }));
 
-            // Convert to Workspace and Sheet
             const ws = XLSX.utils.json_to_sheet(exportData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Activity Log");
+            XLSX.utils.book_append_sheet(wb, ws, "Activity Log History");
 
-            // Download file
-            const filename = `Activity_Tracker_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            // Use a consistent name or timestamp
+            const filename = "Activity_Tracker_Database.xlsx";
             XLSX.writeFile(wb, filename);
+
+            alert('Exporting your full history. To keep one file, just replace the old "Activity_Tracker_Database.xlsx" in your folder!');
         });
 
         clearBtn.addEventListener('click', () => {
-            if (confirm('Clear all current records?')) {
+            if (confirm('Are you sure? This will delete ALL records from your history.')) {
                 records = [];
+                saveToDisk();
                 updateTable();
                 form.reset();
             }
         });
+
+        // Special message for the "Folder" requirement
+        console.log("Tip: Browsers cannot automatically write to your 'Project New' folder for security. By exporting your full history each time, you can maintain one master Excel file by overwriting the old one.");
     </script>
 
 </body>
